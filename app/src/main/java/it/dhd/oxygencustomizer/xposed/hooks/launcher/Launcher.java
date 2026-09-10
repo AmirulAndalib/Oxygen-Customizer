@@ -343,6 +343,22 @@ public class Launcher extends XposedMods {
                     }
                 });
 
+        ReflectedClass RecentInterruptAnimUtilKt = ReflectedClass.ofIfPossible("com.oplus.quickstep.utils.RecentInterruptAnimUtilKt");
+        RecentInterruptAnimUtilKt
+                .before("computeNonInterruptFocusToNextPageTarget")
+                .run(param -> {
+                    if (!mDisablePreviousRecents) return;
+                    param.setResult(-1);
+                });
+
+        ReflectedClass TileCardFirstInterruptFocusPolicy = ReflectedClass.ofIfPossible("com.oplus.quickstep.utils.tilecardfirst.policy.TileCardFirstInterruptFocusPolicy");
+        TileCardFirstInterruptFocusPolicy
+                .before("resolveFocusPageFallback")
+                .run(param -> {
+                    if (!mDisablePreviousRecents) return;
+                    param.setResult(-1);
+                });
+
         ReflectedClass IntegrationUIManager = ReflectedClass.ofIfPossible("com.oplus.quickstep.integration.ui.IntegrationUIManager");
         IntegrationUIManager
                 .before("createSearchIntent")
