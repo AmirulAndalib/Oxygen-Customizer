@@ -12,8 +12,10 @@ import static de.robv.android.xposed.XposedHelpers.setObjectField;
 import static it.dhd.oxygencustomizer.utils.Constants.Packages.LAUNCHER;
 import static it.dhd.oxygencustomizer.xposed.XPrefs.Xprefs;
 
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.database.ContentObserver;
 import android.net.Uri;
 import android.os.Build;
@@ -48,6 +50,9 @@ public class Launcher extends XposedMods {
     // 1 replace discover with shelf
     // 2 enable discover
 
+    private boolean mCustomGlobalSearch = false;
+    private String mCustomGlobalSearchInt = "app:it.dhd.oxygencustomizer";
+
     private View OplusFastScroll;
 
     private ContentObserver assistScreenSwitchObserverExp, shelfSupportAssistScreenObserver;
@@ -78,6 +83,8 @@ public class Launcher extends XposedMods {
         mHideDrawerLabels = Xprefs.getBoolean("drawer_hide_app_labels", false);
         mDisablePreviousRecents = Xprefs.getBoolean("disable_previous_recents", false);
         mReplaceLock = Xprefs.getBoolean("replace_lock", false);
+        mCustomGlobalSearch = Xprefs.getBoolean("launcher_custom_search_switch", false);
+        mCustomGlobalSearchInt = Xprefs.getString("launcher_global_search_launch", "app:it.dhd.oxygencustomizer");
 
         // shelf behavior
         mCustomShelfBehavior = Xprefs.getBoolean("launcher_custom_shelf_switch", false);
@@ -334,6 +341,24 @@ public class Launcher extends XposedMods {
                     if (mDisablePreviousRecents) {
                         param.setResult(false);
                     }
+                });
+
+        ReflectedClass IntegrationUIManager = ReflectedClass.ofIfPossible("com.oplus.quickstep.integration.ui.IntegrationUIManager");
+        IntegrationUIManager
+                .before("createSearchIntent")
+                .run(param -> {
+                    if (!mCustomGlobalSearch) return;
+                    PackageManager mPackageManager = mContext.getPackageManager();
+                    Intent launchIntent;
+                    if (mCustomGlobalSearchInt.contains("app:")) {
+                        launchIntent = mPackageManager.getLaunchIntentForPackage(mCustomGlobalSearchInt.replace("app:", ""));
+                        launchIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP + Intent.FLAG_ACTIVITY_SINGLE_TOP);
+                    } else {
+                        String[] parts = mCustomGlobalSearchInt.replace("activity:", "").split("/");
+                        launchIntent = new Intent(Intent.ACTION_MAIN);
+                        launchIntent.setComponent(new ComponentName(parts[0], parts[1]));
+                    }
+                    param.setResult(launchIntent);
                 });
 
         ReflectedClass OplusStackTaskViewTouchCtrl = ReflectedClass.ofIfPossible("com.android.quickstep.uioverrides.touchcontrollers.OplusStackTaskViewTouchCtrl");

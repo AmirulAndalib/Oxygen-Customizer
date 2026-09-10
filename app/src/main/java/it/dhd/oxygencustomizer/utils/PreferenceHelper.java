@@ -1436,6 +1436,20 @@ public class PreferenceHelper {
                 }
             }
 
+            if (preference.getKey().equals("launcher_global_search_launch")) {
+                String prefValue = instance.mPreferences.getString(key, "none");
+                int titleRes = prefValue.contains("app:") ? R.string.qs_widget_custom_app : R.string.plusKey_activity;
+                String title = preference.getContext().getString(titleRes);
+                String cleanValue = prefValue.replace("app:", "").replace("activity:", "");
+                String[] parts = cleanValue.split("/", 2);
+                String name = AppUtils.getAppName(preference.getContext(), parts[0]);
+                if (parts.length > 1) {
+                    name += "\n" + parts[1];
+                }
+                String finalName = name;
+                preference.setSummaryProvider(p -> title + "\n" + finalName);
+            }
+
             if (preference instanceof OplusSliderPreference sliderPreference) {
                 if (Objects.equals(sliderPreference.getKey(), "batteryWarningRange")) {
                     sliderPreference.mOplusSlider.setLabelFormatter(value -> (int) value + "%");

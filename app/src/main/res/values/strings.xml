@@ -762,6 +762,10 @@
     <string name="disable_discover">Disable Discover</string>
     <string name="replace_discover_with_shelf">Replace Discover with Shelf</string>
     <string name="enable_discover">Enable Discover (stock behavior)</string>
+    <string name="custom_global_search">Custom global search</string>
+    <string name="custom_global_search_summary">Choose the app or the activity to launch with global search shortcut</string>
+    <string name="custom_global_search_explaination">We can launch every app and every activity with built-in global search gesture from Launcher. Feel free to choose between app and activity.</string>
+    <string name="custom_global_search_action">Action</string>
 
     <!-- NavBar Strings -->
     <string name="navbar_title">Navigation Bar</string>
