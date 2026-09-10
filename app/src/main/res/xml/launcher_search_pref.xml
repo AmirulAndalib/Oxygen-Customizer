@@ -12,7 +12,7 @@
 
     <it.dhd.oneplusui.preference.OplusPreferenceCategory />
 
-    <it.dhd.oxygencustomizer.ui.preferences.TopIntroPreference android:title="@string/custom_swipe_right_behavior_explaination" />
+    <it.dhd.oxygencustomizer.ui.preferences.TopIntroPreference android:title="@string/custom_global_search_explaination" />
 
     <it.dhd.oneplusui.preference.OplusPreferenceCategory android:key="behavior_category">
 
